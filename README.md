@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="promo/skill-promo-v2.png" alt="store-screenshots — 앱 스크린샷만 주면 프레임·배경·문구까지 얹어 스토어 등록 이미지를 만들어주는 Claude Code 스킬" width="100%" />
+<img src="promo/skill-promo-v2.png" alt="store-screenshots — 앱 스크린샷만 주면 프레임·배경·문구까지 얹어 스토어 등록 이미지를 만들어주는 에이전트 스킬 (Claude Code · Codex)" width="100%" />
 
 # store-screenshots
 
@@ -9,6 +9,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Agent%20Skill-D97757?logo=claude&logoColor=white)](https://claude.com/claude-code)
+[![Codex](https://img.shields.io/badge/Codex-Agent%20Skill-000000?logo=openai&logoColor=white)](https://openai.com/codex)
 [![Stores](https://img.shields.io/badge/App%20Store%20%26%20Google%20Play-%EA%B7%9C%EA%B2%A9%20%EC%A7%80%EC%9B%90-4285F4)](#-출력-예시)
 
 </div>
@@ -16,7 +17,7 @@
 ---
 
 앱스토어·플레이스토어에 올릴 마케팅 스크린샷, 매번 피그마 열어서 만들기 귀찮으시죠?
-이 스킬은 **원본 앱 스크린샷만 주면** Claude Code가 알아서 만들어줍니다.
+이 스킬은 **원본 앱 스크린샷만 주면** 에이전트가 알아서 만들어줍니다. **Claude Code와 OpenAI Codex 둘 다 지원**해요 — 같은 SKILL.md 형식(Agent Skills)을 그대로 씁니다.
 
 ## ✨ 무엇을 해주나요
 
@@ -38,13 +39,21 @@
 
 ```bash
 git clone https://github.com/LeeHueeng/store-screenshots.git
+
+# Claude Code
 cp -r store-screenshots/store-screenshots ~/.claude/skills/
+
+# Codex
+mkdir -p ~/.agents/skills
+cp -r store-screenshots/store-screenshots ~/.agents/skills/
 ```
 
-| 범위 | 위치 |
-|------|------|
-| 모든 프로젝트에서 사용 | `~/.claude/skills/` (위 명령) |
-| 특정 프로젝트에서만 사용 | 그 프로젝트의 `.claude/skills/`에 복사 |
+| 에이전트 | 모든 프로젝트에서 사용 | 특정 프로젝트에서만 사용 |
+|----------|------------------------|--------------------------|
+| Claude Code | `~/.claude/skills/` | 그 프로젝트의 `.claude/skills/` |
+| Codex | `~/.agents/skills/` | 저장소 루트의 `.agents/skills/` |
+
+> Codex 구버전을 쓴다면 스킬 경로가 `~/.codex/skills/`일 수 있어요.
 
 ## 💬 사용법
 
@@ -54,11 +63,19 @@ Claude Code에서:
 /store-screenshots ./screenshots
 ```
 
-또는 그냥 자연어로 — **"앱스토어 스크린샷 만들어줘"**.
+Codex에서:
+
+```
+$store-screenshots ./screenshots
+```
+
+(또는 `/skills`로 목록에서 선택)
+
+어느 쪽이든 그냥 자연어로도 됩니다 — **"앱스토어 스크린샷 만들어줘"**.
 
 ### 진행 흐름
 
-1. **원본 수집** — 폴더에서 스크린샷을 찾고, 없으면 Claude가 **직접 앱을 조작해서** 캡처합니다.
+1. **원본 수집** — 폴더에서 스크린샷을 찾고, 없으면 에이전트가 **직접 앱을 조작해서** 캡처합니다.
    - Android: `adb` tap/screencap · iOS 시뮬레이터: 딥링크(`simctl openurl`) 우선 → idb · Maestro · AppleScript
    - 상태바는 9:41 · 배터리 100%로 통일
    - 사용자는 화면을 넘길 필요 없음 — 선택지 고르기와 문구 컨펌만 하면 됩니다
@@ -83,7 +100,7 @@ store-screenshots/
 
 | 필요한 것 | 비고 |
 |-----------|------|
-| [Claude Code](https://claude.com/claude-code) | 스킬 실행 환경 |
+| [Claude Code](https://claude.com/claude-code) 또는 [Codex](https://openai.com/codex) | 스킬 실행 환경 — 둘 중 하나면 됩니다 |
 | Chrome 또는 Chromium | 헤드리스 렌더링용 — 없으면 Playwright로 자동 폴백 |
 | `sips`(macOS 내장) 또는 ImageMagick | 이미지 크기 검증용 |
 
