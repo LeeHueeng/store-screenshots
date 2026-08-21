@@ -42,13 +42,34 @@ argument-hint: [원본 스크린샷 폴더 경로]
 
 #### 자동 캡처 — iOS 시뮬레이터
 
-캡처는 `xcrun simctl io booted screenshot 01.png`. 탭은 `simctl`로 불가능하므로 도구 우선순위대로:
+캡처는 `xcrun simctl io booted screenshot 01.png`. 화면 이동은 우선순위대로:
 
+0. **딥링크가 최우선.** 앱 소스에서 URL scheme을 찾는다(Info.plist의 `CFBundleURLTypes`, 라우팅 코드). 있으면 탭이 아예 필요 없다:
+   `xcrun simctl openurl booted "myapp://calendar"` → 1초 대기 → 캡처. simctl만으로 100% 자동화되므로 아래 도구들이 전부 불필요. scheme이 없는 앱이면 "탭별 딥링크를 앱에 추가해줄까?"를 선택지로 제안해볼 것 — 몇 줄이면 되고 이후 재실행도 편해진다.
 1. **idb**가 있으면(`command -v idb`): `idb ui describe-all`로 요소 좌표를 얻고 `idb ui tap X Y`.
 2. **Maestro**가 있으면(`command -v maestro`): `tapOn`/`takeScreenshot`으로 flow yaml을 만들어 `maestro test`.
 3. 둘 다 없으면 AppleScript로 Simulator 창을 직접 클릭(손쉬운 사용 권한 필요):
    System Events로 Simulator 창의 position/size를 얻고, 기기 해상도 → 창 좌표로 비례 변환해 `click at {x, y}`, 사이사이 `delay 1`.
-4. 전부 실패했을 때만 AskUserQuestion으로 묻는다: "idb 설치 후 자동 진행 (Recommended)" / "내가 직접 화면을 넘길게". 수동을 골랐을 때만 사용자에게 화면 전환을 부탁한다.
+4. 전부 실패했을 때만 AskUserQuestion으로 묻는다: "idb 설치 후 자동 진행 (Recommended)" / "앱에 딥링크 추가하고 진행" / "내가 직접 화면을 넘길게". 수동을 골랐을 때만 사용자에게 화면 전환을 부탁한다.
+
+#### 캡처 전 상태바 정리 (스토어 품질)
+
+모든 캡처의 시계·배터리·안테나를 통일하면 결과물이 한 세트로 보인다. 캡처 시작 전에 걸고, 끝나면 해제한다.
+
+- iOS:
+  ```bash
+  xcrun simctl status_bar booted override --time "9:41" --batteryLevel 100 --cellularBars 4 --wifiBars 3
+  # 캡처 끝난 뒤: xcrun simctl status_bar booted clear
+  ```
+- Android (데모 모드):
+  ```bash
+  adb shell settings put global sysui_demo_allowed 1
+  adb shell am broadcast -a com.android.systemui.demo -e command enter
+  adb shell am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0941
+  adb shell am broadcast -a com.android.systemui.demo -e command battery -e level 100 -e plugged false
+  adb shell am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4
+  # 캡처 끝난 뒤: adb shell am broadcast -a com.android.systemui.demo -e command exit
+  ```
 
 ### 2. 질문 플로우 (전부 선택지로)
 
