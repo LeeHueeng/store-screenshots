@@ -1,6 +1,6 @@
 ---
 name: store-screenshots
-description: 앱스토어·플레이스토어 등록용 마케팅 스크린샷 자동 생성. 원본 앱 스크린샷에 기기 프레임(iPhone, iPad, Galaxy, Fold, Flip)을 씌우고 배경 그라데이션과 홍보 문구를 얹어 스토어 규격 PNG로 출력한다. "스토어 스크린샷 만들어줘", "앱스토어 이미지", "플레이스토어 스크린샷" 같은 요청에 사용.
+description: 앱스토어·플레이스토어 등록용 마케팅 스크린샷 자동 생성. 원본 앱 스크린샷에 기기 프레임(iPhone, iPad, Galaxy, Fold, Flip)을 씌우고 배경 그라데이션과 홍보 문구를 얹어 스토어 규격 PNG로 출력한다. Turns raw app screenshots into store-ready App Store & Google Play marketing images — device frames, branded backgrounds, marketing copy, exact store sizes. "스토어 스크린샷 만들어줘", "앱스토어 이미지", "플레이스토어 스크린샷", "make App Store screenshots", "Play Store screenshots" 같은 요청에 사용.
 argument-hint: [원본 스크린샷 폴더 경로]
 ---
 
