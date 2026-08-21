@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="promo/skill-promo-v2.png" alt="store-screenshots — AI agent skill that turns raw app screenshots into store-ready App Store and Google Play marketing images with device frames, branded backgrounds, and marketing copy" width="100%" />
+<img src="promo/skill-promo-v2-en.png" alt="store-screenshots — AI agent skill that turns raw app screenshots into store-ready App Store and Google Play marketing images with device frames, branded backgrounds, and marketing copy" width="100%" />
 
 # store-screenshots
 
