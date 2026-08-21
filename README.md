@@ -6,7 +6,7 @@
 이 스킬은 **원본 앱 스크린샷만 주면** Claude Code가 알아서 만들어줍니다:
 
 - 📱 기기 프레임을 씌우고 — iPhone, iPad, Galaxy, **Fold**, **Flip**
-- 🎨 앱 주조색을 뽑아 배경 그라데이션을 그리고
+- 🎨 앱의 실제 디자인(colors.xml, xcassets, 아이콘)에서 색을 뽑아 배경을 그리고 — 모던·미니멀 / 팝 / 다크 프리셋도 선택 가능
 - ✍️ 화면 내용을 읽고 홍보 문구(헤드라인·서브카피)를 제안하고 — **컨펌 받은 뒤에만** 진행
 - 📐 스토어 규격에 딱 맞는 PNG로 렌더링 (App Store 1320×2868, Play 1080×1920 등)
 
@@ -33,8 +33,8 @@ Claude Code에서:
 ### 진행 흐름
 
 1. **원본 수집** — 폴더에서 스크린샷을 찾고, 없으면 Claude가 **직접 앱을 조작해서** 캡처 (Android는 adb tap/screencap, iOS 시뮬레이터는 idb·Maestro·AppleScript). 사용자는 화면을 넘길 필요 없음 — 선택지 고르기와 문구 컨펌만 하면 됨
-2. **질문** — 타깃 기기(iPhone / iPad / Galaxy / Fold·Flip)와 어필 방향(직접 지정 vs 알아서)
-3. **문구 컨펌** — 슬라이드별 헤드라인·서브카피 초안을 표로 제시, OK 받기 전엔 렌더링 안 함
+2. **질문 (전부 선택지)** — 플랫폼(App Store / Google Play) → 기종(iPhone, iPad, Galaxy, Fold·Flip) → 스타일(앱 디자인에 맞추기 / 모던·미니멀 / 팝 / 다크) → 장수 → 어필 방향
+3. **시안 컨펌** — 문구 초안 표 + 첫 슬라이드 시안 1장을 실제 규격으로 렌더링해 보여주고, OK 받은 뒤에만 전체 렌더링
 4. **렌더링** — HTML/CSS로 프레임·배경·문구를 조합해 헤드리스 크롬으로 캡처
 5. **검증** — 모든 PNG의 픽셀 크기를 스토어 규격과 대조
 
@@ -43,6 +43,7 @@ Claude Code에서:
 ```
 store-screenshots/
 ├── appstore-iphone-69/01.png …   # 1320×2868
+├── appstore-iphone-65/           # 1284×2778 — iPhone은 항상 두 세트
 ├── appstore-ipad-13/             # 2064×2752
 ├── play-phone/                   # 1080×1920
 └── play-foldable/
