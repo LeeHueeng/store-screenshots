@@ -14,6 +14,7 @@ argument-hint: [원본 스크린샷 폴더 경로]
 2. 최종 PNG는 전부 픽셀 크기를 검증(`sips` 또는 ImageMagick `identify`)하고, 규격 표와 다르면 다시 렌더링한다.
 3. 기기 프레임은 외부에서 다운로드하지 않고 HTML/CSS로 직접 그린다(라이선스·네트워크 문제 없음). 실사 프레임을 원하면 아래 "실사 프레임" 참고.
 4. 중간 작업 파일(html 등)은 스크래치패드에 두고, 출력 폴더에는 최종 PNG만 남긴다.
+5. **사용자에게 손을 쓰게 하지 않는다.** 화면 전환·탭 같은 기기 조작은 Claude가 adb/idb/AppleScript로 직접 한다(아래 "자동 캡처"). 사용자의 개입은 AskUserQuestion 선택지 고르기나 짧은 타이핑까지만. "화면 띄우고 메시지 보내주세요" 같은 진행은 금지 — 자동화 수단이 전부 실패했을 때만 선택지로 수동 진행 여부를 묻는다.
 
 ## 워크플로
 
@@ -21,11 +22,29 @@ argument-hint: [원본 스크린샷 폴더 경로]
 
 - 인자(`$ARGUMENTS`)로 폴더를 받았으면 거기서, 아니면 현재 디렉토리에서 png/jpg를 스캔한다:
   `find . -maxdepth 2 \( -iname '*.png' -o -iname '*.jpg' \) -not -path '*/store-screenshots/*'`
-- 원본이 하나도 없으면 실행 중인 기기에서 직접 캡처를 제안한다:
-  - iOS 시뮬레이터: `xcrun simctl io booted screenshot 01.png`
-  - Android 기기/에뮬레이터: `adb exec-out screencap -p > 01.png`
-- **각 원본을 Read로 열어 무슨 화면인지 파악한다.** 문구는 실제 화면 내용에 근거해야 한다.
+- 파일이 없으면 **Claude가 직접 기기를 조작해서 캡처한다**(아래 자동 캡처). 사용자에게 화면 전환을 부탁하지 않는다.
+- **각 원본을 Read로 열어 무슨 화면인지 파악한다.** 문구는 실제 화면 내용에 근거해야 한다. 직접 캡처한 경우에도 캡처 직후 Read로 열어 의도한 화면이 맞는지 확인하고, 아니면 다시 탐색해서 재캡처한다.
 - 앱 이름·아이콘을 찾을 수 있으면 참고한다(Info.plist, strings.xml, ic_launcher, 앱 아이콘 파일 등).
+- 캡처할 화면 목록(홈, 핵심 기능 화면 등)은 Claude가 앱 구조를 보고 스스로 정하되, 애매하면 2단계 질문에 선택지로 끼워서 같이 묻는다.
+
+#### 자동 캡처 — Android (adb, 완전 자동)
+
+1. `adb devices`로 기기/에뮬레이터 확인. 앱 실행: `adb shell monkey -p <package> 1` 또는 `adb shell am start -n <package>/<activity>`.
+2. 현재 화면의 UI 구조를 덤프해서 탭·버튼 좌표를 얻는다:
+   `adb exec-out uiautomator dump /dev/tty` → XML의 `bounds="[x1,y1][x2,y2]"`에서 중심 좌표 계산.
+3. 이동 → 안정화 → 캡처를 한 번에 (sleep은 기기 쪽에서 실행):
+   `adb shell "input tap X Y; sleep 1" && adb exec-out screencap -p > 02-mypet.png`
+4. 화면마다 2~3을 반복. 스크롤이 필요하면 `adb shell input swipe`, 텍스트 입력은 `adb shell input text`.
+
+#### 자동 캡처 — iOS 시뮬레이터
+
+캡처는 `xcrun simctl io booted screenshot 01.png`. 탭은 `simctl`로 불가능하므로 도구 우선순위대로:
+
+1. **idb**가 있으면(`command -v idb`): `idb ui describe-all`로 요소 좌표를 얻고 `idb ui tap X Y`.
+2. **Maestro**가 있으면(`command -v maestro`): `tapOn`/`takeScreenshot`으로 flow yaml을 만들어 `maestro test`.
+3. 둘 다 없으면 AppleScript로 Simulator 창을 직접 클릭(손쉬운 사용 권한 필요):
+   System Events로 Simulator 창의 position/size를 얻고, 기기 해상도 → 창 좌표로 비례 변환해 `click at {x, y}`, 사이사이 `delay 1`.
+4. 전부 실패했을 때만 AskUserQuestion으로 묻는다: "idb 설치 후 자동 진행 (Recommended)" / "내가 직접 화면을 넘길게". 수동을 골랐을 때만 사용자에게 화면 전환을 부탁한다.
 
 ### 2. 타깃·어필 방향 질문
 
