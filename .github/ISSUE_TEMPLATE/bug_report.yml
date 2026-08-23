@@ -1,0 +1,62 @@
+name: 🐛 버그 리포트
+description: 동작 오류나 문제를 알려주세요
+title: "[버그] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그를 찾아주셔서 감사합니다! 🙏
+        아래 항목을 채워주시면 더 빨리 해결할 수 있어요.
+
+  - type: dropdown
+    id: agent
+    attributes:
+      label: 어디서 실행했나요?
+      description: 어떤 에이전트에서 이 스킬을 실행했나요?
+      options:
+        - Claude Code
+        - OpenAI Codex
+        - 둘 다
+        - 기타
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: 무슨 일이 있었나요?
+      description: 어떤 문제가 발생했는지 자세히 설명해주세요.
+      placeholder: 예) 렌더링이 안 되고 에러가 나요
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 재현 방법
+      description: 문제를 재현하는 단계를 순서대로 적어주세요.
+      placeholder: |
+        1. ...
+        2. ...
+        3. 에러 발생
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대했던 결과
+      description: 원래 어떻게 동작했어야 하나요?
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 에러 로그 / 스크린샷
+      description: 터미널 에러 메시지나 스크린샷을 붙여넣어주세요.
+      render: shell
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      description: 사용 중인 운영체제 (macOS/Windows/Linux)
+      placeholder: macOS Sequoia
